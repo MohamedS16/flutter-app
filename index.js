@@ -1,0 +1,11 @@
+const express = require('express')
+const app = express()
+const dotenv = require('dotenv')
+const mongoose = require('mongoose')
+const userRoutes = require('./routes/usersRoutes.js')
+dotenv.config()
+app.use(express.json())
+app.listen(process.env.PORT,()=>{console.log('Server Started')})
+mongoose.connect(process.env.DB).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
+
+app.use('/api',userRoutes)
