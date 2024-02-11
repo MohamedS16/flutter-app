@@ -8,7 +8,7 @@ const uploadfunction = () => {
         },
         filename: async (req, file, cb) => {
             const vname = await Date.now() + '-' + Math.round(Math.random() * 100000);
-            cb(null,__dirname + vname + '.' + file.mimetype.split('/')[1])
+            cb(null,vname + '.' + file.mimetype.split('/')[1])
         },
 
     })
