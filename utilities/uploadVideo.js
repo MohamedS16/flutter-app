@@ -3,7 +3,7 @@ const multer = require('multer')
 const uploadfunction = () => {
     const diskstorage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'project/src/uploads/videos')
+            cb(null, './')
 
         },
         filename: async (req, file, cb) => {
