@@ -5,9 +5,7 @@ module.exports = () => {
   return [
     body("username")
       .notEmpty()
-      .withMessage("Username is Required")
-      .isLength({ min: 5 })
-      .withMessage("Username Must be at least 5 Characters"),
+      .withMessage("Username is Required"),
     body("password").notEmpty().withMessage("Password is Required"),
     body("phone")
       .notEmpty()
