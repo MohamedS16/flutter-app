@@ -1,32 +1,31 @@
 const Video = require('./../models/Video.js')
 const verify = require('./../middleware/verifyJWT.js')
-const jwt = require('jsonwebtoken')
-
 
 const uploadvideo = async (req,res)=>{
     const token = await req.headers.authtoken
-
     if(token){
         try{
             let data = await verify(token,process.env.JWT)
             const videoreq = await req.files
-    const resp = []
-    videoreq.forEach(element => {
-        const video = new Video({
-            videoname : element.path
-        }) 
-        video.save()
-        resp.push(`Video ${element.originalname} Uploaded Successfully`)
-    });
-    res.json({
-        namee: resp
-    })
-        }catch(er){
-            res.json({msg: "Invalid Token, Please Login Again"})
-        }
-    }else{
-        res.json("Please Login First")
-    }
+            const resp = []
+            videoreq.forEach(element => {
+                const video = new Video({
+                    videoname : element.path
+                }) 
+                video.save()
+                resp.push(`Video ${element.originalname} Uploaded Successfully`)
+            });
+            let msg = 'Thank You ' + data.username
+            res.json({
+                namee: resp,
+                msg
+            })
+                }catch(er){
+                    res.json({msg: "Invalid Token, Please Login Again"})
+                }
+            }else{
+                res.json({msg:"Please Login First"})
+            }
     
 }
 
