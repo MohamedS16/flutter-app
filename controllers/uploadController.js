@@ -7,10 +7,12 @@ const uploadvideo = async (req,res)=>{
         try{
             let data = await verify(token,process.env.JWT)
             const videoreq = await req.files
+            let reqno = await req.body
             const resp = []
             videoreq.forEach(element => {
                 const video = new Video({
-                    videoname : element.path
+                    videoname : element.path,
+                    requestid : reqno.requestid
                 }) 
                 video.save()
                 resp.push(`Video ${element.originalname} Uploaded Successfully`)
