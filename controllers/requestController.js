@@ -22,7 +22,8 @@ const newrequest = async(req,res)=>{
                         for : data.for,
                         type: data.type,
                         case : data.case,
-                        gender : data.gender
+                        gender : data.gender,
+                        payment : data.payment
                     })
                 newrequest.save()
                 httpresponse(res,200,responsemsg.SUCCESS,newrequest,null)

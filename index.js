@@ -11,7 +11,7 @@ app.listen(process.env.PORT,()=>{console.log('Server Started')})
 mongoose.connect(process.env.DB).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
 app.use(cors())
 app.use(express.json())
- 
+
 app.use('/api',userRoutes)
 app.use('/api',uploadRoutes)
 app.use('/api',requestRoutes)
