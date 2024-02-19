@@ -2,7 +2,6 @@ const { body } = require("express-validator");
 
 module.exports = () => {
   return [
-    body("customer").notEmpty().withMessage("Customer ID is Required"),
 
     body("for")
       .notEmpty()
