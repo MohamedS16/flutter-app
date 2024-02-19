@@ -9,9 +9,11 @@ router.route('/register')
             .post(validationMiddleware(),usersController.register)
 router.route('/login')
             .post(usersController.login)
+router.route('/updateprofile')
+            .post(usersController.updateprofile)
 
 router.route('/upload')
-            .post(uploadfunction().array('vid'),uploadcontroller.uploadvideo)
+            .post(uploadfunction().single('vid'),uploadcontroller.uploadvideo)
 
 router.route('/videos')
             .get(uploadcontroller.getallvideos)

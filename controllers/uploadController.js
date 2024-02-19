@@ -1,34 +1,40 @@
 const Video = require('./../models/Video.js')
 const verify = require('./../middleware/verifyJWT.js')
+const Requestt = require('./../models/Request.js')
+const{ httpresponse} = require('./../utilities/httpResponse.js')
+const responsemsg = require('./../utilities/responsemsg.js')
 
 const uploadvideo = async (req,res)=>{
     const token = await req.headers.authtoken
     if(token){
         try{
             let data = await verify(token,process.env.JWT)
-            const videoreq = await req.files
+            const videoreq = await req.file
             let reqno = await req.body
-            const resp = []
-            videoreq.forEach(element => {
-                const video = new Video({
-                    videoname : element.path,
-                    requestid : reqno.requestid
-                }) 
-                video.save()
-                resp.push(`Video ${element.originalname} Uploaded Successfully`)
-            });
-            let msg = 'Thank You ' + data.username
-            res.json({
-                namee: resp,
-                msg
-            })
-                }catch(er){
-                    res.json({msg: "Invalid Token, Please Login Again"})
-                }
-            }else{
-                res.json({msg:"Please Login First"})
+            if(reqno.step == 1){
+                let ok = await Requestt.updateOne({_id:reqno.id},{
+                    'videos.one.link' : videoreq.path
+                })
+            }else if(reqno.step == 2){
+                let ok = await Requestt.updateOne({_id:reqno.id},{
+                    'videos.two.link' : videoreq.path
+                })
+            }else if(reqno.step == 3){
+                let ok = await Requestt.updateOne({_id:reqno.id},{
+                    'videos.three.link' : videoreq.path
+                })
+            }else if(reqno.step == 4){
+                let ok = await Requestt.updateOne({_id:reqno.id},{
+                    'videos.four.link' : videoreq.path
+                })
             }
-    
+            httpresponse(res,200,responsemsg.SUCCESS,"Successfully Uploaded",null)
+        }catch(er){
+                httpresponse(res,200,responsemsg.FAIL,null,"Invalid Token, Please Login Again")
+        }
+            }else{
+                httpresponse(res,200,responsemsg.FAIL,null,"Please Login First")
+            }
 }
 
 const getallvideos = async (req,res)=>{
