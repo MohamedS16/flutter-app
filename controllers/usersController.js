@@ -41,7 +41,7 @@ const login = async (req, res) => {
         type: user[0].type
       })
 
-      httpresponse(res,200,responsemsg.SUCCESS,{token},null)
+      httpresponse(res,200,responsemsg.SUCCESS,{token,username: user[0].username,type: user[0].type, gender: user[0].gender},null)
     } else {
       httpresponse(res,200,responsemsg.FAIL,{token:null},"Wrong Password")
     }

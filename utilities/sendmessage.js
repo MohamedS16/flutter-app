@@ -1,15 +1,18 @@
 const accountSid = 'ACc9d33dc59f354c5a1fa5f4f09cb1a3de';
-const authToken = '49249976875a6ff8434efc541e9177b7';
+const authToken = '7ee32997a536051a0b9b004bfda39dc0';
 const client = require('twilio')(accountSid, authToken);
 
-const sendmsg = ()=>{
-    client.messages.create({
-        body: 'Test Twillo',
-        from: '+13236883584',
-        to: '+00966571107803'
-    })
-    .then(message => console.log(message.sid))
-    .catch(err=>console.log(err))
+let sendmsg = ()=>{
+
+    client.messages
+        .create({
+            body: 'Islam Test',
+            from: '+13236883584',
+            to: '+201124449731'
+        })
+        .then(message => console.log(message.sid))
+        .catch(er=>console.log(er));
 }
 
 module.exports = sendmsg
+
