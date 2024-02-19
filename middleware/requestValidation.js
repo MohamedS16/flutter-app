@@ -4,8 +4,6 @@ module.exports = () => {
   return [
     body("customer").notEmpty().withMessage("Customer ID is Required"),
 
-    body("doer").notEmpty().withMessage("Doer ID is Required"),
-
     body("for")
       .notEmpty()
       .withMessage("The Name of The Person You Are doing this for is Required"),

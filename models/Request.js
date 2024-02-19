@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 let requestschema = mongoose.Schema({
     customer: String,
-    doer : String,
+    doer : {type: String, default: "none"},
     for : String,
     type: String,
     case : String,
