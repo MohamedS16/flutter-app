@@ -23,6 +23,7 @@ const newrequest = async(req,res)=>{
                         type: data.type,
                         case : data.case,
                         gender : data.gender,
+                        comment: data.comment,
                         payment : data.payment
                     })
                 newrequest.save()
