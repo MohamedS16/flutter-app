@@ -9,9 +9,9 @@ module.exports = () => {
 
     body("type")
       .notEmpty()
-      .withMessage("Type is Required")
-      .isIn(["1", "2", "3"])
-      .withMessage("Type Must Be 1 , 2 or 3"),
+      .withMessage("Type is Required"),
+      // .isIn(["1", "2", "3"])
+      // .withMessage("Type Must Be 1 , 2 or 3"),
 
     body("case")
       .notEmpty()

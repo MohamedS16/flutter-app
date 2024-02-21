@@ -11,6 +11,8 @@ router.route('/login')
             .post(usersController.login)
 router.route('/updateprofile')
             .post(usersController.updateprofile)
+router.route('/deleteaccount')
+            .get(usersController.deleteaccount)
 
 router.route('/upload')
             .post(uploadfunction().single('vid'),uploadcontroller.uploadvideo)

@@ -57,27 +57,42 @@ const updateprofile = async (req,res)=>{
     if(token){
       try{
         let olddata = await verify(token,process.env.JWT)
-        let hashedpass = await bcrypt.hash(newdata.password,6)
-        let updatedata = await User.updateOne({phone:olddata.phone},{
-          username: newdata.username,
-          password: hashedpass,
-          phone: newdata.phone
-        })
-
-        if(updatedata.modifiedCount == 0 ){
-          httpresponse(res,200,responsemsg.FAIL,null,"Nothing Updated, Please Try Again")
+        console.log(olddata)
+        if(olddata){
+          let updatedata
+          if(newdata.password){
+            let hashedpass = await bcrypt.hash(newdata.password,6)
+            updatedata = await User.updateOne({phone:olddata.phone},{
+              username: newdata.username,
+              password: hashedpass,
+              phone: newdata.phone
+            })
+            console.log(updatedata)
+          }else{
+            updatedata = await User.updateOne({phone:olddata.phone},{
+              username: newdata.username,
+              phone: newdata.phone
+            })
+            console.log(updatedata)
+          }
+          if(updatedata.modifiedCount == 0 ){
+            httpresponse(res,200,responsemsg.FAIL,null,"Nothing Updated, Please Try Again")
+          }else{
+            let token = createToken({
+              username:newdata.username ,
+              phone: newdata.phone,
+              type: newdata.type
+            })
+  
+            httpresponse(res,200,responsemsg.SUCCESS,{msg:"Updated Successfully",token},null)
+  
+          }
+  
         }else{
-          let token = createToken({
-            username:newdata.username ,
-            phone: newdata.phone,
-            type: newdata.type
-          })
-
-          httpresponse(res,200,responsemsg.SUCCESS,{msg:"Updated Successfully",token},null)
-
+          httpresponse(res,200,responsemsg.FAIL,null,"User Not Updated")
         }
-      }catch(er){
-        httpresponse(res,200,responsemsg.FAIL,null,"Invalid Token")
+              }catch(er){
+        httpresponse(res,200,responsemsg.FAIL,er,"Invalid Token")
       }
 
     }else{
@@ -86,8 +101,31 @@ const updateprofile = async (req,res)=>{
 
 }
 
+const deleteaccount = async (req,res)=>{
+  let token = await req.headers.authtoken
+  if(token){
+    try{
+      let userdata = await verify(token,process.env.JWT)
+      if(userdata){
+        let deleteaccount = await User.deleteOne({phone:userdata.phone})
+        if(deleteaccount.deletedCount == 1){
+          httpresponse(res,200,responsemsg.SUCCESS,null,"Account Deleted Successfully")
+        }else{
+          httpresponse(res,200,responsemsg.FAIL,null,"User Not Found")
+        }
+      }
+    }catch(er){
+      httpresponse(res,200,responsemsg.FAIL,null,"Invalid Token")
+    }
+  }else{
+    httpresponse(res,200,responsemsg.FAIL,null,"Please Login First")
+  }
+
+}
+
 module.exports = {
   register,
   login,
-  updateprofile
+  updateprofile,
+  deleteaccount
 };
