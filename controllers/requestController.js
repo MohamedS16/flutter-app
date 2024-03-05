@@ -44,7 +44,6 @@ const newrequest = async(req,res)=>{
 
 }
 
-
 const getcustomerrequests = async(req,res)=>{
     const token = await req.headers.authtoken
 
@@ -66,9 +65,6 @@ const getcustomerrequests = async(req,res)=>{
 
     }
 }
-
-
-
 
 module.exports = {
     newrequest,
