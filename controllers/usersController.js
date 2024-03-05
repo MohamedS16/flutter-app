@@ -260,7 +260,6 @@ const resetpassword = async (req, res) => {
         httpresponse(res,200,responsemsg.FAIL,null,"User Not Found")
       }else{
         let rand = JSON.stringify(Math.round(Math.random() * 1000000))
-        console.log(rand)
         let hashedpass = await bcrypt.hash(rand,6)
         let doer = await Doer.updateOne({phone:phone},{
           resetPassword : hashedpass
@@ -269,12 +268,11 @@ const resetpassword = async (req, res) => {
         if(doer.modifiedCount != 1){
           httpresponse(res,200,responsemsg.FAIL,null,"Phone Number Not Founddd")
         }else{
-          httpresponse(res,200,responsemsg.SUCCESS,{msg:"New Password Sent To Your Email"},null)
+          httpresponse(res,200,responsemsg.SUCCESS,{msg:"New Password Sent To Your Email",pass:rand},null)
         }
       }
     }else{
       let rand = JSON.stringify(Math.round(Math.random() * 1000000))
-      console.log(rand)
 
       let hashedpass = await bcrypt.hash(rand,6)
       let customer = await User.updateOne({phone:phone},{
@@ -283,7 +281,7 @@ const resetpassword = async (req, res) => {
       if(customer.modifiedCount != 1){
         httpresponse(res,200,responsemsg.FAIL,null,"Phone Number Not Found")
       }else{
-        httpresponse(res,200,responsemsg.SUCCESS,{msg:"New Password Sent To Your Email"},null)
+        httpresponse(res,200,responsemsg.SUCCESS,{msg:"New Password Sent To Your Email",pass:rand},null)
       }
     }
   }
