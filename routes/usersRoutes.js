@@ -19,7 +19,7 @@ router.route('/updateprofile')
 router.route('/deleteaccount')
             .get(usersController.deleteaccount)
 router.route('/resetpassword')
-            .post(usersController.resetpassword)
+            .post(usersController.resetpassword) 
 
 
 

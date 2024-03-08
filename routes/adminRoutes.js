@@ -1,10 +1,7 @@
 const express = require('express')
 const router = express.Router();
-const customerController = require('./../controllers/customerController.js');
-const doerController = require('./../controllers/doersController.js');
-const requestcontroller = require('./../controllers/requestController.js')
 const adminController = require('./../controllers/adminController.js')
-
+const copounsController = require('./../controllers/copounsController.js')
 
 router.route('/doer/getall')
             .get(adminController.getalldoers)
@@ -18,6 +15,15 @@ router.route('/getcustomerrequests/:phone')
             .get(adminController.getcustomerequests)
 router.route('/getdoerrequests/:phone')
             .get(adminController.getdoersrequests)
+router.route('/addcopoun')
+            .post(copounsController.addcoupoun)
+router.route('/getallcopouns')
+            .get(copounsController.getallcopouns)
+router.route('/deletecopoun')
+            .post(copounsController.deletecopoun)
+router.route('/approvevideo')
+            .post(adminController.approvevideo)
+
 
 
 

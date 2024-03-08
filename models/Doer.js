@@ -6,7 +6,7 @@ let doerschema = mongoose.Schema({
     password: String,
     email: String,
     phone: String,
-    residenceID: Number,
+    residenceID: String,
     type: String,
     resetPassword: String
 })

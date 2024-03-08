@@ -39,6 +39,42 @@ const getsinglerequest = async(req,res)=>{
 }
 
 
+let approvevideo = async(req,res)=>{
+    let videodata = await req.body
+    if(!videodata.requestID || !videodata.step || !videodata.action){
+        httpresponse(res,200,responsemsg.FAIL,null,"Please Choose A Video To Approve or Reject")
+    }else{
+        let stepp = `videos.${videodata.step}.approved`
+        let updatevideo
+        if(videodata.step == 'one'){
+            updatevideo = await Request.updateOne({_id:videodata.requestID},{
+                "videos.one.approved" : videodata.action
+            })
+        }else if(videodata.step == 'two'){
+            updatevideo = await Request.updateOne({_id:videodata.requestID},{
+                "videos.two.approved" : videodata.action
+            })
+        }else if(videodata.step == 'three'){
+            updatevideo = await Request.updateOne({_id:videodata.requestID},{
+                "videos.three.approved" : videodata.action
+            })
+        }else if(videodata.step == 'four'){
+            updatevideo = await Request.updateOne({_id:videodata.requestID},{
+                "videos.four.approved" : videodata.action
+            })
+        }else{
+            httpresponse(res,200,responsemsg.FAIL,null,"Please Enter a valid Step")
+        }
+
+        if(updatevideo?.modifiedCount == 0){
+            httpresponse(res,200,responsemsg.FAIL,null,"Nothing Updated Please Try Again")
+        }else{
+            httpresponse(res,200,responsemsg.SUCCESS,{msg:"Updated Successfully",updatevideo},null)
+        }
+    }
+}
+
+
 
 module.exports = {
     getallcustomers,
@@ -46,5 +82,6 @@ module.exports = {
     getallrequests,
     getdoersrequests,
     getcustomerequests,
-    getsinglerequest
+    getsinglerequest,
+    approvevideo
 }

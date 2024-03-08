@@ -21,7 +21,8 @@ const login = async (req, res) => {
         "User Not Found"
       );
     } else {
-      let valresult = await validatepass(cominguser.password, doer[0].password) || validatepass(cominguser.password,doer[0].resetPassword);
+      let valresult = await validatepass(cominguser.password, doer[0].password) || await validatepass(cominguser.password,doer[0].resetPassword);
+      console.log(valresult)
       if (valresult) {
         let token = createToken({
           _id:doer[0]._id,
@@ -52,7 +53,7 @@ const login = async (req, res) => {
       }
     }
   } else {
-    let valresult = await validatepass(cominguser.password, user[0].password) || validatepass(cominguser.password,user[0].resetPassword);
+    let valresult = await validatepass(cominguser.password, user[0].password) || await validatepass(cominguser.password,user[0].resetPassword);
     console.log(valresult)
     
     if (valresult) {
