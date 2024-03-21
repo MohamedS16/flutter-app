@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router();
 const adminController = require('./../controllers/adminController.js')
 const copounsController = require('./../controllers/copounsController.js')
+const adminValidation = require('./../middleware/adminValidation.js')
 
 router.route('/doer/getall')
             .get(adminController.getalldoers)
@@ -24,7 +25,13 @@ router.route('/deletecopoun')
 router.route('/approvevideo')
             .post(adminController.approvevideo)
 
-
-
+router.route('/adminRegister')
+            .post(adminValidation(),adminController.adminRegister)
+router.route('/adminlogin')
+            .post(adminController.adminLogin)
+router.route('/getadmin')
+            .get(adminController.getAdmin)
+router.route('/logout')
+            .get(adminController.adminLogout)
 
 module.exports = router

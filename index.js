@@ -8,11 +8,16 @@ const requestRoutes = require('./routes/requestsroutes.js')
 const cors = require('cors')
 const path = require('path')
 const adminRoutes = require('./routes/adminRoutes.js')
+const cookieParser = require('cookie-parser')
 
 dotenv.config()
 app.listen(process.env.PORT,()=>{console.log('Server Started')})
-mongoose.connect(process.env.DB).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
-app.use(cors())
+mongoose.connect(process.env.localdb).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
+app.use(cors({
+    origin:['http://localhost:3000'],
+    credentials: true
+}))
+app.use(cookieParser())
 app.use(express.json())
 app.use('/',express.static(path.join(__dirname,'/')))
 
