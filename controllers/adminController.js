@@ -172,7 +172,7 @@ const adminLogin = async (req, res) => {
       });
       res.cookie("jwt", token, {
         httpOnly: "false",
-        SameSite : 'None',
+        sameSite : false,
         maxAge: 24 * 60 * 60 * 1000,
       });
       httpresponse(
