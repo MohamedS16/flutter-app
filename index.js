@@ -14,7 +14,7 @@ dotenv.config()
 app.listen(process.env.PORT,()=>{console.log('Server Started')})
 mongoose.connect(process.env.DB).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
 app.use(cors({
-    origin:['http://localhost:3000','https://taffweed-dashboard.vercel.app'],
+    origin:['http://localhost:3000/'],
     credentials: true 
 }))
 app.use(cookieParser())
