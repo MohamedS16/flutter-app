@@ -7,8 +7,8 @@ let Admin = require('./../models/Admin.js')
 let validateAdmin = async(req,res,next)=>{
     try{
         console.log(req.headers)
-        let reqToken = await req.headers.jwt
-        let token = reqToken.split('jwt=')[1]
+        let token = await req.headers.jwt
+        // let token = reqToken.split('jwt=')[1]
         console.log(token)
         if(!token){
             httpresponse(res,401,responsemsg.FAIL,null,"UnAuthorized")
