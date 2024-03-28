@@ -197,7 +197,7 @@ const adminLogin = async (req, res) => {
 const getAdmin = async (req, res) => {
   let token = await req.cookies["jwt"];
   if (!token) {
-    httpresponse(res, 401, responsemsg.FAIL, null, "Unauthorized");
+    httpresponse(res, 401, responsemsg.FAIL, null, "Unauthorized - getadmin");
   } else {
     let verifytoken = await verifyToken(token);
     res.json(verifytoken);

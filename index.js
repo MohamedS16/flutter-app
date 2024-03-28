@@ -12,10 +12,10 @@ const cookieParser = require('cookie-parser')
 
 dotenv.config()
 app.listen(process.env.PORT,()=>{console.log('Server Started')})
-mongoose.connect(process.env.DB).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
+mongoose.connect(process.env.localdb).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
 app.use(cors({
     origin:['http://localhost:3000','https://taffweed-dashboard.vercel.app'],
-    credentials: true 
+    credentials: true
 }))
 app.use(cookieParser())
 app.use(express.json())
