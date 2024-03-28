@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser')
 dotenv.config()
 app.listen(process.env.PORT,()=>{console.log('Server Started')})
 mongoose.connect(process.env.DB).then(()=>{console.log('DB Connected')}).catch(err=>console.log(err))
-app.use(cookieParser())
+// app.use(cookieParser())
 app.use((req,res,next)=>{
     res.header("Access-Control-Allow-Credentials", "true")
     .header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
