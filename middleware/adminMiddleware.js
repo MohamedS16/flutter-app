@@ -22,6 +22,7 @@ let validateAdmin = async(req,res,next)=>{
             }
         }
     }catch(er){
+        console.log(er)
         httpresponse(res,401,responsemsg.FAIL,null,"Invalid Token, Please Login Agin as admin")
     }
 }
