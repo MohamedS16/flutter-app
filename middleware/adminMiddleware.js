@@ -6,10 +6,12 @@ let Admin = require('./../models/Admin.js')
 
 let validateAdmin = async(req,res,next)=>{
     try{
-        console.log(req)
-        console.log(req.headers)
-        console.log(req.cookies)
-        let token = await req.headers.jwt
+        // console.log(req)
+        console.log(await req.headers)
+        console.log(await req.cookies)
+        console.log(await req.cookies['jwt'])
+        console.log(await req.cookies.jwt)
+        let token = await req.cookies.jwt
         // let token = reqToken.split('jwt=')[1]
         console.log(token)
         if(!token){
