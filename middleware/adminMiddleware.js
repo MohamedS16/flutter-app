@@ -14,7 +14,7 @@ let validateAdmin = async(req,res,next)=>{
         console.log(await req.header.cookie)
         console.log(await req.cookie)
         console.log(JSON.stringify(await req.cookies))
-        let token = await req.cookies.jwt
+        let token = await req.headers.jwt
         // let token = reqToken.split('jwt=')[1]
         console.log(token)
         if(!token){
