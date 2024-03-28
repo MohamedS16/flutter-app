@@ -171,8 +171,6 @@ const adminLogin = async (req, res) => {
         adminName: admin[0].adminName,
       });
       res.cookie("jwt", token, {
-        httpOnly: false,
-        sameSite : false,
         maxAge: 24 * 60 * 60 * 1000,
       });
       httpresponse(
