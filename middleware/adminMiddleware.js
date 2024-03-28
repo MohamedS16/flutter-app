@@ -6,10 +6,10 @@ let Admin = require('./../models/Admin.js')
 
 let validateAdmin = async(req,res,next)=>{
     try{
-        // console.log(req.headers.cookie)
+        console.log(req.headers.cookie)
         let reqToken = await req.headers.cookie
         let token = reqToken.split('jwt=')[1]
-        // console.log(token)
+        console.log(token)
         if(!token){
             httpresponse(res,401,responsemsg.FAIL,null,"UnAuthorized")
         }else{
