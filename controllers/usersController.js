@@ -1,14 +1,17 @@
+const validatepass = require("./../middleware/validatepassword.js");
 const User = require("./../models/User.js");
+const Doer = require("./../models/Doer.js");
+
 const bcrypt = require("bcrypt");
 const createToken = require("./../utilities/createJWT.js");
-const validatepass = require("./../middleware/validatepassword.js");
 const { httpresponse } = require("./../utilities/httpResponse.js");
 const responsemsg = require("./../utilities/responsemsg.js");
 const verify = require("./../middleware/verifyJWT.js");
-const Doer = require("./../models/Doer.js");
+const JWT = require('jsonwebtoken')
+
 
 const login = async (req, res) => {
-  const cominguser = await req.body;
+  let cominguser = await req.body;
   let user = await User.find({ phone: cominguser.phone });
   if (user.length == 0) {
     let doer = await Doer.find({ phone: cominguser.phone });
@@ -21,7 +24,7 @@ const login = async (req, res) => {
         "User Not Found"
       );
     } else {
-      let valresult = await validatepass(cominguser.password, doer[0].password) || await validatepass(cominguser.password,doer[0].resetPassword);
+      let valresult = await validatepass(cominguser.password, doer[0].password) || await validatepass(cominguser.password,doer[0].resetPassword || '$abc');
       console.log(valresult)
       if (valresult) {
         let token = createToken({
@@ -53,7 +56,8 @@ const login = async (req, res) => {
       }
     }
   } else {
-    let valresult = await validatepass(cominguser.password, user[0].password) || await validatepass(cominguser.password,user[0].resetPassword);
+
+    let valresult = await validatepass(cominguser.password, user[0].password) || await validatepass(cominguser.password,user[0].resetPassword || '$abc');
     console.log(valresult)
     
     if (valresult) {
@@ -289,9 +293,47 @@ const resetpassword = async (req, res) => {
   
 };
 
+
+const lastLogged = async(req,res)=>{
+  try{
+      let token = await req.headers.authtoken
+      if(!token){
+          httpresponse(res,401,responsemsg.FAIL,null,"No Token Provided");
+      }else{
+          let tokendata = JWT.verify(token,process.env.JWT)
+          console.log(tokendata)
+      if(!tokendata.phone){
+          httpresponse(res,401,responsemsg.FAIL,null,"Invalid Token");
+      }else{
+          let upd;
+          console.log(tokendata.type)
+          if(tokendata.type == 1){
+            upd = await User.updateOne({phone: tokendata.phone},{
+              lastLogged: Date.now()
+            })
+          }else{
+            upd = await Doer.updateOne({phone: tokendata.phone},{
+              lastLogged: Date.now()
+            }) 
+          }
+          if(upd.modifiedCount != 1){
+              httpresponse(res,402,responsemsg.FAIL,null,"Nothing Updated");
+          }else{
+              httpresponse(res,200,responsemsg.FAIL,"Updated Successfully",null);
+          }
+      }
+      }
+  }catch(er){
+      httpresponse(res,401,responsemsg.FAIL,null,"Invalid Tokennn");
+  }
+}
+
+
+
 module.exports = {
   login,
   updateprofile,
   deleteaccount,
-  resetpassword
+  resetpassword,
+  lastLogged
 };

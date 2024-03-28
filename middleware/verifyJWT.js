@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
 
-const verify = async (token,salt)=>{
-    return jwt.verify(token,salt,(er,decoded)=>{
+const verify = async (token)=>{
+    return jwt.verify(token,process.env.JWT,(er,decoded)=>{
         if(er){
             throw new Error("Invalid Tokennnn")
         }else{

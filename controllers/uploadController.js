@@ -1,4 +1,4 @@
-const Video = require('./../models/Video.js')
+// const Video = require('./../models/Video.js')
 const verify = require('./../middleware/verifyJWT.js')
 const Requestt = require('./../models/Request.js')
 const{ httpresponse} = require('./../utilities/httpResponse.js')
@@ -37,21 +37,21 @@ const uploadvideo = async (req,res)=>{
             }
 }
 
-const getallvideos = async (req,res)=>{
-    const token = await req.headers.authtoken
-    try{
-        let data = await verify(token,process.env.JWT)
-        const videos = await Video.find().select('videoname')
-        console.log(data)
-        res.json({
-            videos
-        })
-    }catch(er){
-        res.json({msg: "Invalid Token"})
-    }
-}
+// const getallvideos = async (req,res)=>{
+//     const token = await req.headers.authtoken
+//     try{
+//         let data = await verify(token,process.env.JWT)
+//         const videos = await Video.find().select('videoname')
+//         console.log(data)
+//         res.json({
+//             videos
+//         })
+//     }catch(er){
+//         res.json({msg: "Invalid Token"})
+//     }
+// }
 
 module.exports = {
     uploadvideo,
-    getallvideos
+    // getallvideos
 }

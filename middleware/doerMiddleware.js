@@ -14,7 +14,7 @@ module.exports = ()=>{
             }
         }),
         body("password").notEmpty().withMessage('Please Fill Your password'),
-        body("phone").notEmpty().withMessage('Please Fill Your Phone Number').custom(async (value) => {
+        body("phone").notEmpty().withMessage('Please Fill Your Phone Number').isMobilePhone().withMessage("Please Enter A Valid Phone Number").custom(async (value) => {
             let existingDoer = await Doer.find({ phone: value });
             let existingUser = await User.find({phone : value});
 

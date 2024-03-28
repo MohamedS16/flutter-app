@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 
 let requestschema = mongoose.Schema({
+    rId:Number,
     customer: String,
     doer : {type: String, default: "none"},
     for : String,
@@ -8,7 +9,9 @@ let requestschema = mongoose.Schema({
     case : String,
     gender : String,
     comment: String,
+    date: Date,
     payment : {type: String, default: "none"},
+    isDone: {type: Boolean, default : false},
     videos: {
         one : {
             link : {type: String, default: "none"},

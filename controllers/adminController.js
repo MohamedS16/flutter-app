@@ -6,18 +6,13 @@ const User = require("./../models/User.js");
 const Admin = require("../models/Admin.js");
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
-const validatepass = require('./../middleware/validatepassword.js')
-const createToken = require('./../utilities/createJWT.js')
-const verifyToken = require('./../middleware/verifyJWT.js')
+const validatepass = require("./../middleware/validatepassword.js");
+const createToken = require("./../utilities/createJWT.js");
+const verifyToken = require("./../middleware/verifyJWT.js");
 
 const getalldoers = async (req, res) => {
   let doers = await Doer.find();
   httpresponse(res, 200, responsemsg.SUCCESS, doers, null);
-};
-
-const getallrequests = async (req, res) => {
-  let requests = await Request.find({});
-  httpresponse(res, 200, responsemsg.SUCCESS, requests, null);
 };
 
 const getallcustomers = async (req, res) => {
@@ -115,85 +110,220 @@ const approvevideo = async (req, res) => {
 };
 
 const adminRegister = async (req, res) => {
-    try{
-        let valresult = validationResult(req);
-        if (valresult.array().length != 0) {
-          let errors = valresult.array().map(element => {
-              return element.msg
-          });
-          httpresponse(res, 200, responsemsg.FAIL, null, errors);
-        } else {
-          let admindata = await req.body;
-          let hashedpassword = await bcrypt.hash(admindata.adminPassword, 6);
-          let registeration = await new Admin({
-            adminName: admindata.adminName,
-            adminPassword: hashedpassword,
-          });
-          let done = await registeration.save();
-          console.log(done)
-          if (!done) {
-            httpresponse(
-              res,
-              200,
-              responsemsg.FAIL,
-              null,
-              "Something Went Wrong, Please Try Again"
-            );
-          } else {
-            httpresponse(
-              res,
-              200,
-              responsemsg.SUCCESS,
-              { msg: "Registered Successfully" },
-              null
-            );
-          }
-        } 
-    }catch(er){
-        console.log(er)
+  try {
+    let valresult = validationResult(req);
+    if (valresult.array().length != 0) {
+      let errors = valresult.array().map((element) => {
+        return element.msg;
+      });
+      httpresponse(res, 200, responsemsg.FAIL, null, errors);
+    } else {
+      let admindata = await req.body;
+      let hashedpassword = await bcrypt.hash(admindata.adminPassword, 6);
+      let registeration = await new Admin({
+        adminName: admindata.adminName,
+        adminPassword: hashedpassword,
+      });
+      let done = await registeration.save();
+      console.log(done);
+      if (!done) {
+        httpresponse(
+          res,
+          200,
+          responsemsg.FAIL,
+          null,
+          "Something Went Wrong, Please Try Again"
+        );
+      } else {
+        httpresponse(
+          res,
+          200,
+          responsemsg.SUCCESS,
+          { msg: "Registered Successfully" },
+          null
+        );
+      }
     }
+  } catch (er) {
+    console.log(er);
+  }
 };
 
-const adminLogin = async (req,res)=>{
-    const cominguser = await req.body;
-    let admin = await Admin.find({ adminName: cominguser.adminName });
-    if (admin.length == 0) {
-        httpresponse(res,200,responsemsg.FAIL,{ token: null },"Admin Not Found");
+const adminLogin = async (req, res) => {
+  const cominguser = await req.body;
+  let admin = await Admin.find({ adminName: cominguser.adminName });
+  if (admin.length == 0) {
+    httpresponse(
+      res,
+      200,
+      responsemsg.FAIL,
+      { token: null },
+      "Admin Not Found"
+    );
+  } else {
+    let valresult = await validatepass(
+      cominguser.adminPassword,
+      admin[0].adminPassword
+    );
+    if (valresult) {
+      let token = createToken({
+        _id: admin[0]._id,
+        adminName: admin[0].adminName,
+      });
+      res.cookie("jwt", token, {
+        httpOnly: "true",
+        maxAge: 24 * 60 * 60 * 1000,
+      });
+      httpresponse(
+        res,
+        200,
+        responsemsg.SUCCESS,
+        {adminName: admin[0].adminName },
+        null
+      );
     } else {
-      let valresult = await validatepass(cominguser.adminPassword, admin[0].adminPassword);
-      if (valresult) {
-        let token = createToken({ _id:admin[0]._id,adminName: admin[0].adminName ,});
-        res.cookie('jwt',token,{
-          httpOnly : 'true',
-          maxAge : 24 * 60 * 60 * 1000,
-        })
-        httpresponse(res,200,responsemsg.SUCCESS,{token,adminName: admin[0].adminName},null);
-        } else {
-          httpresponse(res,200,responsemsg.FAIL,{ token: null },"Wrong Password");
+      httpresponse(
+        res,
+        200,
+        responsemsg.FAIL,
+        { token: null },
+        "Wrong Password"
+      );
+    }
+  }
+};
+
+const getAdmin = async (req, res) => {
+  let token = await req.cookies["jwt"];
+  if (!token) {
+    httpresponse(res, 401, responsemsg.FAIL, null, "Unauthorized");
+  } else {
+    let verifytoken = await verifyToken(token);
+    res.json(verifytoken);
+  }
+};
+
+const adminLogout = async (req, res) => {
+  res.cookie("jwt", "", { maxAge: 1 });
+  res.json({ msg: "Logged Out" });
+};
+
+const assignRequest = async (req, res) => {
+  let request = req.body;
+  let upd = await Request.updateOne(
+    { _id: request.rid },
+    {
+      doer: request.doer,
+    }
+  );
+
+  if (upd.modifiedCount != 1) {
+    httpresponse(
+      res,
+      200,
+      responsemsg.FAIL,
+      null,
+      "Nothing Updated, Please Try Again"
+    );
+  } else {
+    let inc = await Doer.updateOne(
+      { phone: request.doer },
+      {
+        $inc: { requests: 1 },
+      }
+    );
+
+    httpresponse(res, 200, responsemsg.SUCCESS, "Updated Successfully", null);
+  }
+};
+
+const allAggregations = async (req, res) => {
+  try {
+    let totalRequests = await Request.estimatedDocumentCount();
+    let requestsCases = await Request.aggregate([
+      {$group : {
+        _id: '$case',
+        count: {$count: {}}
+      }}
+    ]);
+    let requestsTypes = await Request.aggregate([
+      {
+        $group: {
+          _id: '$type',
+          count: {$count: {}}
         }
       }
-}
+    ]);
+    let requestPayment = await Request.countDocuments({payment: {$ne: "none"}})
+    let requestsAggregations = {
+      totalRequests,
+      requestsCases,
+      requestsTypes,
+      requestPayment
+    }
 
-const getAdmin = async (req,res)=>{
-  let token = await req.cookies['jwt']
-  if(!token){
-    httpresponse(res,401,responsemsg.FAIL,null,"Unauthorized")
-  }else{
-    let verifytoken = await verifyToken(token,process.env.JWT)
-    res.json(verifytoken)
+
+    let totalUsers = await User.estimatedDocumentCount()
+    let usersGender = await User.aggregate([
+      {
+        $group : {
+          _id : "$gender",
+          count : {$count : {}}
+        }
+      }
+    ])
+    let usersCountry = await User.aggregate([
+      {
+        $group : {
+          _id : "$country",
+          count: {$count: {}}
+        }
+      }
+    ])
+    let usersDevice = await User.aggregate([
+      {
+        $group : {
+          _id : "$device",
+          count: {$count: {}}
+        }
+      }
+    ])
+    let topThreeUsers = await User.find({requests: {$gt : 0}},'username rId phone requests').sort({requests: -1}).limit(3)
+
+    let usersAggregations = {
+      totalUsers,
+      usersGender,
+      usersCountry,
+      usersDevice,
+      topThreeUsers
+    }
+ 
+
+    let totalDoers = await Doer.estimatedDocumentCount()
+    let topThreeDoers = await Doer.find({requests: {$gt:0}},'dId firstName phone requests').sort({requests: -1}).limit(3)
+
+    let doersAggregations = {
+      totalDoers,
+      topThreeDoers
+    }
+
+    httpresponse(res, 200, responsemsg.SUCCESS, { requestsAggregations,usersAggregations,doersAggregations }, null);
+  
+  } catch (er) {
+    console.log(er)
+    httpresponse(
+      res,
+      403,
+      responsemsg.SUCCESS,
+      null,
+      {msg:"Something Went Wrong, Please Try Again Later",er}
+    );
   }
-    
-} 
-
-const adminLogout = async(req,res)=>{
-  res.cookie('jwt','',{maxAge: 1})
-  res.json({msg:"Logged Out"})
-}
+};
 
 module.exports = {
   getallcustomers,
   getalldoers,
-  getallrequests,
   getdoersrequests,
   getcustomerequests,
   getsinglerequest,
@@ -201,5 +331,7 @@ module.exports = {
   adminRegister,
   adminLogin,
   getAdmin,
-  adminLogout
+  adminLogout,
+  assignRequest,
+  allAggregations
 };

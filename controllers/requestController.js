@@ -1,5 +1,6 @@
 const {validationResult} = require("express-validator")
 const Request = require('./../models/Request.js')
+const User = require('./../models/User')
 const{ httpresponse} = require('./../utilities/httpResponse.js')
 const responsemsg = require('./../utilities/responsemsg.js')
 const verify = require('./../middleware/verifyJWT.js')
@@ -16,17 +17,22 @@ const newrequest = async(req,res)=>{
                 const validationresult = await validationResult(req)
                 let er = validationresult.array().map((e) => e.msg);
                 if(er.length == 0){
+                    let lastRequestId = await Request.find({}).sort({rId : -1}).limit(1);
+                    let reqId = lastRequestId[0].rId + 1 || 0
                     const newrequest = new Request({
+                        rId : reqId,
                         customer: validatetoken.phone,
-                        doer : data.doer,
                         for : data.for,
                         type: data.type,
                         case : data.case,
                         gender : data.gender,
                         comment: data.comment,
-                        payment : data.payment
+                        payment : data.payment,
+                        date : Date.now()
                     })
                 newrequest.save()
+                let updateuser = await User.updateOne({phone:validatetoken.phone},{$inc:{'requests': 1}})
+                console.log(updateuser)
                 httpresponse(res,200,responsemsg.SUCCESS,newrequest,null)
             }else{
                 httpresponse(res,200,responsemsg.FAIL,null,er)
@@ -66,7 +72,28 @@ const getcustomerrequests = async(req,res)=>{
     }
 }
 
+const getallrequests = async (req, res) => {
+    
+    let requests = await Request.find({});
+    httpresponse(res, 200, responsemsg.SUCCESS, requests, null);
+};
+
+
+
+const requestsAggr = async(req,res)=>{
+    try{
+        let total = await Request.estimatedDocumentCount()
+        let donee = await Request.countDocuments({isDone:true})
+        httpresponse(res,200,responsemsg.SUCCESS,{total,donee},null)
+    }catch(er){
+        httpresponse(res,403,responsemsg.SUCCESS,null,"Something Went Wrong, Please Try Again Later")
+    }
+}
+
+
 module.exports = {
     newrequest,
-    getcustomerrequests
+    getcustomerrequests,
+    getallrequests,
+    requestsAggr
 }
