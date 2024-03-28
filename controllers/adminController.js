@@ -173,6 +173,7 @@ const adminLogin = async (req, res) => {
       res.cookie("jwt", token, {
         httpOnly: true,
         sameSite: false,
+        secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
       httpresponse(

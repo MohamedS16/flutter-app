@@ -14,6 +14,7 @@ let validateAdmin = async(req,res,next)=>{
         console.log(await req.header.cookie)
         console.log(await req.cookie)
         console.log(JSON.stringify(await req.cookies))
+        console.log(JSON.stringify(await req.cookie))
         let token = await req.headers.jwt
         // let token = reqToken.split('jwt=')[1]
         console.log(token)
@@ -21,8 +22,11 @@ let validateAdmin = async(req,res,next)=>{
             httpresponse(res,401,responsemsg.FAIL,null,"UnAuthorized")
         }else{
             let data = await verifyJwt(token)
+            console.log(data)
             let admin = await Admin.find({_id: data._id})
+            console.log(admin)
             if(admin.length == 0){
+                console.log(admin)
                 httpresponse(res,401,responsemsg.FAIL,null,"Admin Not Found")
             }else{
                 next()
